@@ -91,3 +91,5 @@ Durante o processo de ETL e análise, os seguintes problemas foram identificados
 
 Essas ações garantiram a **qualidade e consistência dos dados** para os insights finais.
 
+
+![Dashboard ](GraficoPosts.png)
