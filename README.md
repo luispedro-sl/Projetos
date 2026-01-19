@@ -42,29 +42,41 @@ As principais métricas analisadas foram:
 - `TotalVendas` — número total de vendas realizadas  
 - `FaturamentoTotal` — soma do valor das vendas  
 - `TicketMedio` — faturamento total dividido pelo número de vendas  
-- `LeadsGerados` — total de leads captados  
+- `Faixa Salarial` — faixa salarial dos clientes
 - `TaxaConversao` — vendas realizadas / leads gerados  
 - `VendasPorMarca` — desempenho por fabricante  
-- `VendasPorEstado` — desempenho geográfico  
+- `VendasPorEstado` — desempenho geográfico
+- `Faixa Etária` — faixa etárial dos clientes
+- `Status Profissional` — status profissional dos clientes
+  
 
 ---
 
 ## 4. ETL com PostgreSQL
 
-O processo de **ETL (Extract, Transform, Load)** foi realizado utilizando **PostgreSQL**, desde a ingestão dos arquivos `.csv` até a criação das tabelas analíticas finais.
+O processo de **ETL (Extract, Transform, Load)** foi realizado integralmente em **PostgreSQL**, utilizando o banco de dados como camada central de transformação e consolidação dos dados analíticos.
+
+Os dados foram **extraídos** a partir de arquivos `.csv`, **transformados** por meio de consultas SQL (tratamento, normalização e criação de métricas) e, por fim, **carregados** em tabelas analíticas prontas para consumo em visualizações e análises exploratórias.
 
 ### Etapas do ETL
 
-- Importação dos dados brutos via `COPY`
-- Padronização de datas e valores monetários (`CAST`, `TO_DATE`)
-- Normalização de categorias (status profissional, faixas salariais, marcas)
-- Criação de métricas derivadas:
-  - `ticket_medio`
-  - `taxa_conversao`
-  - `faturamento_mensal`
-- Junção entre tabelas de clientes, vendas e leads
+- **Extração**
+  - Importação dos dados brutos a partir de arquivos `.csv` utilizando o comando `COPY`.
 
-### Exemplo de Query
+- **Transformação**
+  - Padronização de tipos de dados e formatos de data (`CAST`, `EXTRACT`)
+  - Cálculo de valores financeiros considerando descontos aplicados
+  - Criação de atributos temporais (mês e ano)
+  - Geração de métricas analíticas como:
+    - `ticket_medio`
+    - `faturamento`
+  - Tratamento de registros inválidos (remoção de vendas sem data de pagamento)
+
+- **Carga**
+  - Consolidação dos dados transformados em tabelas analíticas agregadas
+  - Organização por período (mês e ano) para análises temporais
+
+### Exemplo de Query de Transformação
 
 ```sql
 WITH tabelarest AS (
@@ -112,18 +124,53 @@ Com base na análise dos dados de **vendas, leads e comportamento dos clientes**
 
 ## 6. Problemas Encontrados e Soluções
 
-Durante o processo de **ETL e análise em PostgreSQL**, os seguintes problemas foram identificados:
+Durante o processo de **ETL, modelagem analítica e análise de dados em PostgreSQL**, foram identificados alguns desafios técnicos relevantes, descritos a seguir.
 
-1. **Inconsistência nos formatos de data e valores monetários**  
-   - Solução: padronização utilizando funções do PostgreSQL como `TO_DATE`, `CAST` e `NUMERIC`.
+### 1. Registros sem data de pagamento
 
-2. **Duplicidade de registros após JOIN entre tabelas**  
-   - Solução: deduplicação com uso de `ROW_NUMBER()` e filtros por chaves primárias.
+- **Problema:** Parte dos registros não possuía `paid_date`, inviabilizando análises de faturamento, ticket médio e conversão.
+- **Solução:** Aplicação do filtro `WHERE paid_date IS NOT NULL` em todas as consultas analíticas, garantindo que apenas vendas concluídas fossem consideradas.
 
-3. **Registros com campos essenciais ausentes (ID ou Data)**  
-   - Solução: exclusão desses registros, uma vez que não eram confiáveis para análises analíticas.
+---
 
-Essas ações garantiram a **qualidade, integridade e consistência dos dados**, possibilitando a geração de insights confiáveis para tomada de decisão.
+### 2. Risco de duplicidade após junções entre tabelas
+
+- **Problema:** As junções entre tabelas de vendas, produtos, clientes e lojas poderiam gerar contagens incorretas.
+- **Solução:** Uso de agregações controladas em CTEs e aplicação de `COUNT(DISTINCT ...)` para métricas sensíveis, como clientes e leads.
+
+---
+
+### 3. Cálculo correto de métricas financeiras
+
+- **Problema:** O valor real da venda dependia da aplicação correta dos descontos sobre o preço do produto.
+- **Solução:** Criação do campo calculado `valor_real`, centralizando o cálculo nas CTEs para reutilização nas métricas de faturamento e ticket médio.
+
+---
+
+### 4. Padronização temporal para análises mensais
+
+- **Problema:** Os dados estavam em nível diário, mas as análises exigiam consolidação por mês e ano.
+- **Solução:** Extração de `mes` e `ano` com `EXTRACT()` e posterior agrupamento para geração de métricas mensais.
+
+---
+
+### 5. Normalização e categorização do perfil dos clientes
+
+- **Problema:** Informações de perfil (gênero, faixa salarial, faixa etária e status profissional) não estavam padronizadas.
+- **Solução:** Uso de expressões `CASE WHEN` para criar categorias analíticas consistentes e comparáveis.
+
+---
+
+### Resultado Final
+
+A aplicação dessas soluções garantiu:
+
+- **Qualidade e consistência dos dados**
+- **Métricas confiáveis para geração de gráficos**
+- **Base analítica sólida para tomada de decisão**
+- **Reprodutibilidade das análises via SQL puro**
+
+Todo o pipeline analítico foi executado exclusivamente em **PostgreSQL**, reforçando o domínio em **SQL, ETL e análise de dados**.
 
 ---
 
@@ -136,5 +183,10 @@ Os resultados finais foram consolidados em um **dashboard analítico**, permitin
 - Dias com maior acesso de Leads
 - Gênero, Faixa Etária e Faixa Salarial dos clientes
 
+#Análise de Vendas e Marketing
+
 ![Dashboard de Vendas e Marketing](Gráficos/Graficos_Analise_de_Vendas.png)
+
+#Análise de Perfil de Clientes e Produtos 
+
 ![Dashboard de Perfil de Clientes e Produtos ](Gráficos/Graficos_Analise_de_Perfil_Clientes.png)
