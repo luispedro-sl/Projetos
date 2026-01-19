@@ -19,3 +19,4 @@ select
 count(*) as quantidade,
 faixa_salarial
 from tabela1
+group by faixa_salarial
