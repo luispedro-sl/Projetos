@@ -2,7 +2,7 @@
 # Estudo de Caso: Análise de Vendas, Produtos e Perfil de Clientes de uma Franquia de Lojas de Automóveis
 
 Este repositório apresenta um **estudo de caso de análise de dados de vendas e perfil de clientes** de uma franquia de lojas de automóveis.  
-O objetivo é **identificar oportunidades estratégicas de investimento**, incluindo **estados com maior potencial de crescimento**, **produtos mais rentáveis** e **melhores dias e horários para veiculação de anúncios**, com base em dados históricos de vendas e comportamento dos clientes.
+O objetivo é **identificar oportunidades estratégicas de investimento**, incluindo **estados com maior potencial de crescimento**, **produtos mais rentáveis** e **melhores dias para veiculação de anúncios**, com base em dados históricos de vendas e comportamento dos clientes.
 
 ---
 
@@ -12,8 +12,8 @@ Identificar e lapidar a **persona dos clientes**, compreendendo de forma aprofun
 
 A análise se concentra nos seguintes pontos:
 
-- **Faixa salarial e status profissional dos clientes**
-- **Top 5 marcas mais vendidas no mês**, incluindo **faturamento total** e **ticket médio mensal**
+- **Faixa salarial ,Status profissional,Faixa Etária,Dias da semana com maior taxa de acesso,entre outras relacionadas aos clientes**
+- **Marcas mais vendidas e Lojas com mais vendas no mês**, incluindo **faturamento total** e **ticket médio mensal**
 - **Leads gerados e taxa de conversão**
 
 Com base nos **padrões de vendas das lojas** e nos **dados comportamentais dos usuários**, o estudo busca gerar **insights estratégicos** para decisões de marketing, expansão e alocação de investimentos.
