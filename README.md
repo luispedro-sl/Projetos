@@ -138,35 +138,35 @@ A análise dos dados revelou padrões importantes para **tomada de decisão estr
 
 Durante o processo de **ETL, modelagem analítica e análise de dados em PostgreSQL**, foram identificados alguns desafios técnicos relevantes, descritos a seguir.
 
-### 1. Registros sem data de pagamento
+### 6.1 Registros sem data de pagamento
 
 - **Problema:** Parte dos registros não possuía `paid_date`, inviabilizando análises de faturamento, ticket médio e conversão.
 - **Solução:** Aplicação do filtro `WHERE paid_date IS NOT NULL` em todas as consultas analíticas, garantindo que apenas vendas concluídas fossem consideradas.
 
 ---
 
-### 2. Risco de duplicidade após junções entre tabelas
+### 6.2 Risco de duplicidade após junções entre tabelas
 
 - **Problema:** As junções entre tabelas de vendas, produtos, clientes e lojas poderiam gerar contagens incorretas.
 - **Solução:** Uso de agregações controladas em CTEs e aplicação de `COUNT(DISTINCT ...)` para métricas sensíveis, como clientes e leads.
 
 ---
 
-### 3. Cálculo correto de métricas financeiras
+### 6.3 Cálculo correto de métricas financeiras
 
 - **Problema:** O valor real da venda dependia da aplicação correta dos descontos sobre o preço do produto.
 - **Solução:** Criação do campo calculado `valor_real`, centralizando o cálculo nas CTEs para reutilização nas métricas de faturamento e ticket médio.
 
 ---
 
-### 4. Padronização temporal para análises mensais
+### 6.4 Padronização temporal para análises mensais
 
 - **Problema:** Os dados estavam em nível diário, mas as análises exigiam consolidação por mês e ano.
 - **Solução:** Extração de `mes` e `ano` com `EXTRACT()` e posterior agrupamento para geração de métricas mensais.
 
 ---
 
-### 5. Normalização e categorização do perfil dos clientes
+### 6.5 Normalização e categorização do perfil dos clientes
 
 - **Problema:** Informações de perfil (gênero, faixa salarial, faixa etária e status profissional) não estavam padronizadas.
 - **Solução:** Uso de expressões `CASE WHEN` para criar categorias analíticas consistentes e comparáveis.
